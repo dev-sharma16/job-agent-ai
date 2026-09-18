@@ -1,0 +1,14 @@
+{
+  "name": "autojob-extension",
+  "version": "1.0.0",
+  "description": "autoJob Browser Extension",
+  "scripts": {
+    "build": "node build.js",
+    "dev": "node build.js --watch",
+    "zip": "node build.js --zip"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.3.0",
+    "esbuild": "^0.20.0"
+  }
+}
