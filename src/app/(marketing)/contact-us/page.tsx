@@ -5,8 +5,8 @@ import { Footer } from "@/components/layout/footer"
 import { ContactForm } from "./contact-form"
 
 export const metadata: Metadata = {
-  title: "Contact Us - JobaajOne",
-  description: "Get in touch with the JobaajOne team",
+  title: "Contact Us - autoJob",
+  description: "Get in touch with the autoJob team",
 }
 
 function ContactFormWrapper() {

@@ -29,11 +29,11 @@ export function welcomeEmailTemplate(name: string): string {
     </head>
     <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
       <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 20px; text-align: center; border-radius: 12px 12px 0 0;">
-        <h1 style="color: white; margin: 0; font-size: 28px;">Welcome to JobaajOne! 🎉</h1>
+        <h1 style="color: white; margin: 0; font-size: 28px;">Welcome to autoJob! 🎉</h1>
       </div>
       <div style="background: #f9fafb; padding: 40px 20px; border-radius: 0 0 12px 12px;">
         <p style="font-size: 18px; margin-bottom: 20px;">Hey <strong>${name}</strong>,</p>
-        <p style="margin-bottom: 20px;">Thanks for joining JobaajOne! We're excited to help you power your career with our AI-driven tools.</p>
+        <p style="margin-bottom: 20px;">Thanks for joining autoJob! We're excited to help you power your career with our AI-driven tools.</p>
         <div style="background: white; padding: 24px; border-radius: 8px; margin: 24px 0; border-left: 4px solid #667eea;">
           <h3 style="margin-top: 0; color: #667eea;">What you can do now:</h3>
           <ul style="margin: 0; padding-left: 20px;">
@@ -47,7 +47,7 @@ export function welcomeEmailTemplate(name: string): string {
         <a href="${process.env.NEXTAUTH_URL}/dashboard" style="display: inline-block; background: #667eea; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600;">Go to Dashboard</a>
         <p style="margin-top: 32px; font-size: 14px; color: #6b7280;">If you have any questions, just reply to this email. We're here to help!</p>
         <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 32px 0;">
-        <p style="font-size: 12px; color: #9ca3af; margin: 0;">© ${new Date().getFullYear()} JobaajOne. All rights reserved.</p>
+        <p style="font-size: 12px; color: #9ca3af; margin: 0;">© ${new Date().getFullYear()} autoJob. All rights reserved.</p>
       </div>
     </body>
     </html>
@@ -75,7 +75,7 @@ export function resetPasswordEmailTemplate(name: string, token: string): string 
         </div>
         <p style="font-size: 14px; color: #6b7280;">This link expires in 1 hour. If you didn't request this, you can safely ignore this email.</p>
         <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 32px 0;">
-        <p style="font-size: 12px; color: #9ca3af; margin: 0;">© ${new Date().getFullYear()} JobaajOne. All rights reserved.</p>
+        <p style="font-size: 12px; color: #9ca3af; margin: 0;">© ${new Date().getFullYear()} autoJob. All rights reserved.</p>
       </div>
     </body>
     </html>
@@ -92,7 +92,7 @@ export function membershipEmailTemplate(name: string, planName: string): string 
     </head>
     <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
       <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); padding: 40px 20px; text-align: center; border-radius: 12px 12px 0 0;">
-        <h1 style="color: white; margin: 0; font-size: 28px;">Welcome to JobaajOne Pro! ✨</h1>
+        <h1 style="color: white; margin: 0; font-size: 28px;">Welcome to autoJob Pro! ✨</h1>
       </div>
       <div style="background: #f9fafb; padding: 40px 20px; border-radius: 0 0 12px 12px;">
         <p style="font-size: 18px; margin-bottom: 20px;">Hey <strong>${name}</strong>,</p>
@@ -110,7 +110,7 @@ export function membershipEmailTemplate(name: string, planName: string): string 
         </div>
         <a href="${process.env.NEXTAUTH_URL}/dashboard" style="display: inline-block; background: #f59e0b; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600;">Explore Pro Features</a>
         <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 32px 0;">
-        <p style="font-size: 12px; color: #9ca3af; margin: 0;">© ${new Date().getFullYear()} JobaajOne. All rights reserved.</p>
+        <p style="font-size: 12px; color: #9ca3af; margin: 0;">© ${new Date().getFullYear()} autoJob. All rights reserved.</p>
       </div>
     </body>
     </html>

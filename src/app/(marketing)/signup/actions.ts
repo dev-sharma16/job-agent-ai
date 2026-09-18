@@ -45,7 +45,7 @@ export async function signup(formData: FormData) {
 
   await sendEmail({
     to: email,
-    subject: `Hey ${name} - Welcome to JobaajOne!`,
+    subject: `Hey ${name} - Welcome to autoJob!`,
     html: welcomeEmailTemplate(name),
   })
 

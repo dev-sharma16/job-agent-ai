@@ -55,7 +55,7 @@ export default function DashboardLayout({
                 <rect width="32" height="32" rx="8" fill="currentColor" />
                 <path d="M8 12h16M8 16h12M8 20h8" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
               </svg>
-              <span className="font-bold text-xl text-gray-900">JobaajOne</span>
+              <span className="font-bold text-xl text-gray-900">autoJob</span>
             </div>
 
             {/* Navigation */}

@@ -8,12 +8,12 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
           <div className="md:col-span-2">
-            <Link href="/" className="flex items-center gap-2" aria-label="JobaajOne Home">
+            <Link href="/" className="flex items-center gap-2" aria-label="autoJob Home">
               <svg className="h-8 w-8 text-primary" viewBox="0 0 32 32" fill="none" aria-hidden="true">
                 <rect width="32" height="32" rx="8" fill="currentColor" />
                 <path d="M8 12h16M8 16h12M8 20h8" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
               </svg>
-              <span className="font-bold text-xl text-gray-900">JobaajOne</span>
+              <span className="font-bold text-xl text-gray-900">autoJob</span>
             </Link>
             <p className="mt-4 max-w-xs text-sm text-gray-600">
               Power your career with AI-driven tools for resume building, job tracking, interview practice, and LinkedIn optimization.
@@ -53,7 +53,7 @@ export function Footer() {
 
         <div className="mt-12 border-t pt-8">
           <p className="text-center text-sm text-gray-500">
-            © {currentYear} JobaajOne. All rights reserved.
+            © {currentYear} autoJob. All rights reserved.
           </p>
         </div>
       </div>

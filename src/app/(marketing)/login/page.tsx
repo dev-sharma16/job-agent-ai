@@ -5,8 +5,8 @@ import { Footer } from "@/components/layout/footer"
 import { LoginForm } from "@/components/auth/login-form"
 
 export const metadata: Metadata = {
-  title: "Sign In - JobaajOne",
-  description: "Sign in to your JobaajOne account to access your dashboard",
+  title: "Sign In - autoJob",
+  description: "Sign in to your autoJob account to access your dashboard",
 }
 
 function LoginFormWrapper() {

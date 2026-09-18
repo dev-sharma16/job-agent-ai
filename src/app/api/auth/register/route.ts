@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
 
     await sendEmail({
       to: email,
-      subject: `Hey ${name} - Welcome to JobaajOne!`,
+      subject: `Hey ${name} - Welcome to autoJob!`,
       html: welcomeEmailTemplate(name),
     })
 

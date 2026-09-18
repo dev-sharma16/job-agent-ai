@@ -13,7 +13,7 @@ const features = [
   },
   {
     title: "Job Application Tracker",
-    description: "Stay Organized and Ahead: Track every job application, follow-ups, and updates effortlessly with JobaajOne.",
+    description: "Stay Organized and Ahead: Track every job application, follow-ups, and updates effortlessly with autoJob.",
     icon: "📋",
     benefits: ["Streamline your job search", "Stay organized, Stay ahead", "Track every application in one place"],
   },
@@ -41,7 +41,7 @@ const companies = [
 ]
 
 const stats = [
-  { value: "487K+", label: "JobaajOne Members" },
+  { value: "487K+", label: "autoJob Members" },
   { value: "1.6M+", label: "Jobs Bookmarked" },
   { value: "689K+", label: "Resumes Created" },
 ]
@@ -64,7 +64,7 @@ export default function HomePage() {
           <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="text-center">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900">
-                JobaajOne: Platform to <br />
+                autoJob: Platform to <br />
                 <span className="relative">
                   Power Your Career!
                   <span className="absolute -bottom-2 left-0 right-0 h-2 bg-primary/20" />
@@ -190,7 +190,7 @@ export default function HomePage() {
         <section className="py-20 bg-white">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">JobaajOne Proven Methodology</h2>
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">autoJob Proven Methodology</h2>
               <p className="mt-4 text-lg text-gray-600">Our proven methodology ensures efficient and effective solutions for job seekers and employers alike.</p>
             </div>
             <div className="grid md:grid-cols-2 gap-12">

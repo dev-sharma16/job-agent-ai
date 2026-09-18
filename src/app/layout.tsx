@@ -6,7 +6,7 @@ import { Providers } from "./providers"
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 
 export const metadata: Metadata = {
-  title: "JobaajOne - Power Your Career with AI",
+  title: "autoJob - Power Your Career with AI",
   description: "Track job applications, build winning resumes, prepare for interviews, and optimize your LinkedIn profile - all in one AI-powered platform.",
   keywords: ["job tracker", "resume builder", "interview practice", "linkedin optimizer", "career AI"],
 }

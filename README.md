@@ -1,4 +1,4 @@
-# JobaajOne - AI-Powered Job Application Platform
+# autoJob - AI-Powered Job Application Platform
 
 A modern, full-stack job application platform built with Next.js 15, TypeScript, PostgreSQL, and AI integration. Migrated from PHP to a modern React/Next.js stack.
 
@@ -44,8 +44,8 @@ Create `.env.local` in the project root with the following variables:
 # ============================================
 # Get from Neon Dashboard: https://console.neon.tech
 # Format: postgresql://user:password@ep-xxx.region.aws.neon.tech/dbname?sslmode=require
-DATABASE_URL="postgresql://user:password@ep-xxx.us-east-2.aws.neon.tech/jobaaj_one?sslmode=require"
-DIRECT_URL="postgresql://user:password@ep-xxx.us-east-2.aws.neon.tech/jobaaj_one?sslmode=require"
+DATABASE_URL="postgresql://user:password@ep-xxx.us-east-2.aws.neon.tech/autojob?sslmode=require"
+DIRECT_URL="postgresql://user:password@ep-xxx.us-east-2.aws.neon.tech/autojob?sslmode=require"
 
 # ============================================
 # NEXTAUTH.JS
@@ -656,7 +656,7 @@ See `migration-docs/` for detailed migration mapping.
 
 ## License
 
-Private project - JobaajOne
+Private project - autoJob
 
 ---
 

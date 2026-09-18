@@ -3,8 +3,8 @@ import { Navbar } from "@/components/layout/navbar"
 import { Footer } from "@/components/layout/footer"
 
 export const metadata: Metadata = {
-  title: "Terms of Service - JobaajOne",
-  description: "JobaajOne Terms of Service",
+  title: "Terms of Service - autoJob",
+  description: "autoJob Terms of Service",
 }
 
 export default function TermsPage() {
@@ -20,7 +20,7 @@ export default function TermsPage() {
 
           <section className="space-y-4">
             <h2 className="text-xl font-semibold text-gray-900">1. Acceptance of Terms</h2>
-            <p className="text-gray-600">By accessing and using JobaajOne, you agree to be bound by these Terms of Service.</p>
+            <p className="text-gray-600">By accessing and using autoJob, you agree to be bound by these Terms of Service.</p>
           </section>
 
           <section className="space-y-4">
@@ -35,7 +35,7 @@ export default function TermsPage() {
 
           <section className="space-y-4">
             <h2 className="text-xl font-semibold text-gray-900">4. Intellectual Property</h2>
-            <p className="text-gray-600">All content and features of JobaajOne are owned by us and protected by intellectual property laws.</p>
+            <p className="text-gray-600">All content and features of autoJob are owned by us and protected by intellectual property laws.</p>
           </section>
 
           <section className="space-y-4">
@@ -50,7 +50,7 @@ export default function TermsPage() {
 
           <section className="space-y-4">
             <h2 className="text-xl font-semibold text-gray-900">7. Contact Us</h2>
-            <p className="text-gray-600">Questions about these Terms? Contact us at legal@jobaajone.com</p>
+            <p className="text-gray-600">Questions about these Terms? Contact us at legal@autojob.com</p>
           </section>
         </div>
       </main>

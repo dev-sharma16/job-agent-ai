@@ -5,8 +5,8 @@ import { Footer } from "@/components/layout/footer"
 import { ResetPasswordForm } from "./reset-password-form"
 
 export const metadata: Metadata = {
-  title: "Reset Password - JobaajOne",
-  description: "Reset your JobaajOne account password",
+  title: "Reset Password - autoJob",
+  description: "Reset your autoJob account password",
 }
 
 function ResetPasswordFormWrapper() {

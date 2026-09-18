@@ -3,8 +3,8 @@ import { Navbar } from "@/components/layout/navbar"
 import { Footer } from "@/components/layout/footer"
 
 export const metadata: Metadata = {
-  title: "Refund Policy - JobaajOne",
-  description: "JobaajOne Refund Policy",
+  title: "Refund Policy - autoJob",
+  description: "autoJob Refund Policy",
 }
 
 export default function RefundPolicyPage() {
@@ -25,7 +25,7 @@ export default function RefundPolicyPage() {
 
           <section className="space-y-4">
             <h2 className="text-xl font-semibold text-gray-900">2. Refund Process</h2>
-            <p className="text-gray-600">To request a refund, contact us at support@jobaajone.com with your order details. Refunds are processed within 5-10 business days.</p>
+            <p className="text-gray-600">To request a refund, contact us at support@autojob.com with your order details. Refunds are processed within 5-10 business days.</p>
           </section>
 
           <section className="space-y-4">
@@ -40,7 +40,7 @@ export default function RefundPolicyPage() {
 
           <section className="space-y-4">
             <h2 className="text-xl font-semibold text-gray-900">5. Contact Us</h2>
-            <p className="text-gray-600">For refund inquiries, contact us at billing@jobaajone.com</p>
+            <p className="text-gray-600">For refund inquiries, contact us at billing@autojob.com</p>
           </section>
         </div>
       </main>

@@ -75,7 +75,7 @@ export function SignupForm() {
     <Card className="w-full max-w-md">
       <CardHeader className="text-center">
         <CardTitle className="text-2xl">Create your account</CardTitle>
-        <CardDescription>Enter your details to get started with JobaajOne</CardDescription>
+        <CardDescription>Enter your details to get started with autoJob</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 gap-3">

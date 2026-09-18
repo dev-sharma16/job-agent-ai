@@ -3,8 +3,8 @@ import { Navbar } from "@/components/layout/navbar"
 import { Footer } from "@/components/layout/footer"
 
 export const metadata: Metadata = {
-  title: "Privacy Policy - JobaajOne",
-  description: "JobaajOne Privacy Policy",
+  title: "Privacy Policy - autoJob",
+  description: "autoJob Privacy Policy",
 }
 
 export default function PrivacyPolicyPage() {
@@ -45,7 +45,7 @@ export default function PrivacyPolicyPage() {
 
           <section className="space-y-4">
             <h2 className="text-xl font-semibold text-gray-900">6. Contact Us</h2>
-            <p className="text-gray-600">If you have questions about this Privacy Policy, please contact us at privacy@jobaajone.com</p>
+            <p className="text-gray-600">If you have questions about this Privacy Policy, please contact us at privacy@autojob.com</p>
           </section>
         </div>
       </main>

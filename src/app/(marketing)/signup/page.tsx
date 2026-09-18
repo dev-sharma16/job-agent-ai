@@ -5,8 +5,8 @@ import { Footer } from "@/components/layout/footer"
 import { SignupForm } from "@/components/auth/signup-form"
 
 export const metadata: Metadata = {
-  title: "Sign Up - JobaajOne",
-  description: "Create your free JobaajOne account and power your career with AI",
+  title: "Sign Up - autoJob",
+  description: "Create your free autoJob account and power your career with AI",
 }
 
 function SignupFormWrapper() {

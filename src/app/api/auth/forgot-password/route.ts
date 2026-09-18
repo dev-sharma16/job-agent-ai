@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
 
         await sendEmail({
           to: user.email,
-          subject: "Reset your JobaajOne password",
+          subject: "Reset your autoJob password",
           html: resetPasswordEmailTemplate(user.name, token),
         })
       }
