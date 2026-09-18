@@ -1,0 +1,452 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  directUrl  = env("DIRECT_URL")
+}
+
+// ============================================
+// AUTH & USER MANAGEMENT
+// ============================================
+
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  email         String    @unique
+  emailVerified DateTime?
+  passwordHash  String?   // null for OAuth-only users
+  image         String?
+  phone         String?
+  jobFunction   String?   // current function area
+  designation   String?
+  location      String?
+  resumeUrl     String?
+  profilePhoto  String?
+  linkedinToken String?   // LinkedIn OAuth access token
+  linkedinTokenExpiry DateTime?
+  extensionId   String?   // Browser extension ID
+  status        Int       @default(1) // 1=active, 0=inactive
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  accounts        Account[]
+  sessions        Session[]
+  jobApplications JobApplication[]
+  resumes         Resume[]
+  resumeDatas     ResumeData[]
+  interviews      Interview[]
+  formattedCV     FormattedCV?
+  functionArea    FunctionArea?    @relation(fields: [functionAreaId], references: [id])
+  functionAreaId  Int?
+  coins           UserCoins?
+  streak          UserStreak?
+  tasks           UserTask[]
+  premium         PremiumMembership?
+  transactions    Transaction[]
+  feedback        Feedback[]
+  contactMessages ContactMessage[]
+  forgetTokens    PasswordReset[]
+  rateLimits      RateLimit[]
+
+  @@index([email])
+  @@index([functionAreaId])
+}
+
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ============================================
+// JOB TRACKER
+// ============================================
+
+model JobApplication {
+  id              String   @id @default(uuid())
+  userId          String
+  originalId      String?  // original ID from job board
+  companyName     String
+  jobTitle        String
+  jobUrl          String?  @db.Text
+  jobDescription  String?  @db.Text
+  location        String?
+  source          String?  // linkedin, naukri, indeed, etc.
+  stage           String   @default("bookmarked") // bookmarked|applying|applied|interviewing|negotiating|accepted|rejected|archived
+  priority        String   @default("medium") // low|medium|high|urgent
+  dateApplied     DateTime?
+  followUp        DateTime?
+  salaryExpected  String?
+  salaryOffered   String?
+  notes           String?  @db.Text
+  isArchived      Boolean  @default(false)
+  isTrashed       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skills JobSkill[]
+  formattedJD FormattedJD?
+  interviews Interview[]
+
+  @@unique([userId, originalId, source])
+  @@index([userId])
+  @@index([userId, stage])
+  @@index([userId, isArchived, isTrashed])
+}
+
+model JobSkill {
+  id              String @id @default(uuid())
+  jobApplicationId String
+  skillId         Int
+  skillName       String
+  matched         Boolean @default(false)
+
+  jobApplication JobApplication @relation(fields: [jobApplicationId], references: [id], onDelete: Cascade)
+
+  @@index([jobApplicationId])
+}
+
+// ============================================
+// RESUME
+// ============================================
+
+model Resume {
+  id          String   @id @default(uuid())
+  userId      String
+  name        String
+  fileUrl     String   @db.Text
+  fileSize    Int?
+  isActive    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model ResumeData {
+  id              String @id @default(uuid())
+  userId          String @unique
+  personalDetails String @default("{}") // JSON: name, email, phone, summary
+  education       String @default("[]") // JSON array
+  experience      String @default("[]") // JSON array
+  skills          String @default("[]") // JSON array
+  projects        String @default("[]") // JSON array
+  certifications  String @default("[]") // JSON array
+  achievements    String @default("[]") // JSON array
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ============================================
+// AI INTERVIEW
+// ============================================
+
+model Interview {
+  id              String   @id @default(uuid())
+  interviewId     String   @unique // external interview ID from AI API
+  userId          String
+  jobApplicationId String?
+  jdFormatted     String?  @db.Text
+  cvFormatted     String?  @db.Text
+  history         String   @default("[]") // JSON: conversation history
+  strengths       String?  @db.Text
+  improvements    String?  @db.Text
+  score           Int?
+  completedAt     DateTime?
+  createdAt       DateTime @default(now())
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobApplication JobApplication? @relation(fields: [jobApplicationId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+}
+
+model FormattedJD {
+  id              String @id @default(uuid())
+  userId          String
+  jobApplicationId String @unique
+  formattedText   String @db.Text
+  createdAt       DateTime @default(now())
+
+  jobApplication JobApplication @relation(fields: [jobApplicationId], references: [id], onDelete: Cascade)
+}
+
+model FormattedCV {
+  id        String @id @default(uuid())
+  userId    String @unique
+  resumeId  String?
+  text      String @db.Text
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ============================================
+// COINS & STREAK SYSTEM
+// ============================================
+
+model UserCoins {
+  id     String @id @default(uuid())
+  userId String @unique
+  coins  Int    @default(0)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UserStreak {
+  id               String    @id @default(uuid())
+  userId           String    @unique
+  currentStreak    Int       @default(0)
+  maxStreak        Int       @default(0)
+  lastCompletedAt  DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ============================================
+// TASKS SYSTEM
+// ============================================
+
+model Task {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  coins       Int      @default(3)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  userTasks UserTask[]
+}
+
+model UserTask {
+  id          String   @id @default(uuid())
+  userId      String
+  taskId      String
+  status      String   @default("pending") // pending|completed
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, taskId, createdAt])
+  @@index([userId, createdAt])
+}
+
+// ============================================
+// FUNCTION AREAS & SKILLS
+// ============================================
+
+model FunctionArea {
+  id     Int     @id @default(autoincrement())
+  name   String  @unique
+  status Int     @default(1)
+  users  User[]
+}
+
+model Skill {
+  id     Int     @id @default(autoincrement())
+  name   String  @unique
+  status Int     @default(1)
+}
+
+// ============================================
+// PAYMENTS & SUBSCRIPTIONS
+// ============================================
+
+model PremiumMembership {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  planId    Int
+  startDate DateTime @default(now())
+  endDate   DateTime
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Transaction {
+  id            String   @id @default(uuid())
+  userId        String
+  razorpayId    String?  @unique
+  amount        Int      // in paise (INR)
+  currency      String   @default("INR")
+  status        String   @default("pending") // pending|captured|failed|refunded
+  planId        Int?
+  coinsRedeemed Int?
+  createdAt     DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model CoinRedemption {
+  id        String   @id @default(uuid())
+  userId    String
+  coinsUsed Int
+  planId    Int
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+// ============================================
+// LINKEDIN DATA
+// ============================================
+
+model ScrappedHR {
+  id             String  @id @default(uuid())
+  linkedinId     String?
+  name           String?
+  designation    String?
+  company        String?
+  location       String?
+  profileUrl     String?
+  profilePicture String?
+  createdAt      DateTime @default(now())
+
+  @@index([company, location])
+}
+
+// ============================================
+// AUTOSAVED JOBS (from extension)
+// ============================================
+
+model AutoScrappedJob {
+  id              String   @id @default(uuid())
+  userId          String
+  originalId      String
+  jobSource       String
+  companyName     String?
+  jobTitle        String?
+  jobUrl          String?  @db.Text
+  jobDescription  String?  @db.Text
+  location        String?
+  createdAt       DateTime @default(now())
+
+  @@unique([userId, originalId, jobSource])
+  @@index([userId])
+}
+
+// ============================================
+// CONTACT & FEEDBACK
+// ============================================
+
+model ContactMessage {
+  id        String   @id @default(uuid())
+  userId    String?
+  name      String
+  email     String
+  phone     String?
+  message   String   @db.Text
+  status    String   @default("new") // new|read|replied
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+}
+
+model Feedback {
+  id        String   @id @default(uuid())
+  userId    String?
+  rating    Int?
+  reason    String?
+  message   String?  @db.Text
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+// ============================================
+// PASSWORD RESET
+// ============================================
+
+model PasswordReset {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([userId, createdAt])
+}
+
+// ============================================
+// RATE LIMITING (Upstash Redis fallback: DB table)
+// ============================================
+
+model RateLimit {
+  bucket       String @id
+  hits         Int    @default(0)
+  windowStart  Int
+  blockedUntil Int    @default(0)
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId String?
+}
+
+// ============================================
+// EMAIL NOTIFICATIONS LOG
+// ============================================
+
+model EmailLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  type      String   // welcome|forgot|membership|interview
+  email     String
+  subject   String
+  status    String   @default("sent") // sent|failed
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
