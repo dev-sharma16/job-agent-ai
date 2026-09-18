@@ -1,9 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
-import { signIn } from "next-auth/react"
+import { signIn, useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -14,10 +14,22 @@ export function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard"
+  const isExtension = searchParams.get("extension") === "true"
+  const { data: session } = useSession()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (session?.user && isExtension) {
+      window.opener?.postMessage({
+        type: 'AUTOJOB_AUTH_SUCCESS',
+        userId: session.user.id
+      }, '*')
+      window.close()
+    }
+  }, [session, isExtension])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -25,15 +37,13 @@ export function LoginForm() {
     setLoading(true)
 
     try {
+      const redirectTo = isExtension ? `/api/auth/callback/credentials?extension=true` : callbackUrl
       await signIn("credentials", {
         email,
         password,
-        redirectTo: callbackUrl,
+        redirectTo,
       })
-      // If signIn succeeds, it redirects, so we won't reach here
-      // If it fails, it throws an error
     } catch (err) {
-      // NextAuth v5 throws on error instead of returning result
       const errorMessage = err instanceof Error ? err.message : "Something went wrong"
       if (errorMessage.includes("CredentialsSignin") || errorMessage.includes("Invalid")) {
         setError("Invalid email or password")
@@ -46,7 +56,8 @@ export function LoginForm() {
   }
 
   const handleOAuthSignIn = (provider: "google" | "linkedin") => {
-    signIn(provider, { callbackUrl })
+    const redirectTo = isExtension ? `/api/auth/callback/${provider}?extension=true` : callbackUrl
+    signIn(provider, { callbackUrl: redirectTo })
   }
 
   return (

@@ -20,3 +20,24 @@ export function decryptData(text: string): string {
   decrypted += decipher.final("utf8")
   return decrypted
 }
+
+export async function importHMACKey(keyBase64: string): Promise<crypto.KeyObject> {
+  const keyBytes = Buffer.from(keyBase64, 'base64');
+  return crypto.createSecretKey(keyBytes);
+}
+
+export async function signHMAC(payload: string, key: crypto.KeyObject): Promise<string> {
+  return crypto.createHmac('sha256', key).update(payload).digest('base64');
+}
+
+export async function verifyHMAC(payload: string, signatureBase64: string, key: crypto.KeyObject): Promise<boolean> {
+  const expectedSignature = await signHMAC(payload, key);
+  return timingSafeEqual(expectedSignature, signatureBase64);
+}
+
+function timingSafeEqual(a: string, b: string): boolean {
+  const aBuf = Buffer.from(a);
+  const bBuf = Buffer.from(b);
+  if (aBuf.length !== bBuf.length) return false;
+  return crypto.timingSafeEqual(aBuf, bBuf);
+}

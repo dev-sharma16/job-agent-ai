@@ -351,6 +351,7 @@ model ScrappedHR {
   profilePicture String?
   createdAt      DateTime @default(now())
 
+  @@unique([linkedinId, company])
   @@index([company, location])
 }
 
