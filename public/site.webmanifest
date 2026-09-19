@@ -1,0 +1,49 @@
+{
+  "name": "autoJob - Power Your Career with AI",
+  "short_name": "autoJob",
+  "description": "Track job applications, build winning resumes, prepare for interviews, and optimize your LinkedIn profile",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#667eea",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "business", "career"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "View your job tracking dashboard",
+      "url": "/dashboard",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Job Tracker",
+      "short_name": "Job Tracker",
+      "description": "Track your job applications",
+      "url": "/job-tracker",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Resume Builder",
+      "short_name": "Resume Builder",
+      "description": "Build AI-powered resume",
+      "url": "/resume-builder",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
