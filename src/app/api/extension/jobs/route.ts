@@ -58,30 +58,39 @@ export async function POST(request: NextRequest) {
 
     if (hrContacts && hrContacts.length > 0) {
       for (const contact of hrContacts) {
-        await prisma.scrappedHR.upsert({
+        const linkedinId = contact.linkedinId || `${contact.company}-${contact.name}`.toLowerCase().replace(/\s+/g, '-');
+        
+        const existingHR = await prisma.scrappedHR.findFirst({
           where: {
-            linkedinId_company: {
-              linkedinId: contact.linkedinId || `${contact.company}-${contact.name}`.toLowerCase().replace(/\s+/g, '-'),
-              company: contact.company
-            }
-          },
-          update: {
-            name: contact.name,
-            designation: contact.designation,
-            location: contact.location,
-            profileUrl: contact.profileUrl,
-            profilePicture: contact.profilePicture
-          },
-          create: {
-            linkedinId: contact.linkedinId || `${contact.company}-${contact.name}`.toLowerCase().replace(/\s+/g, '-'),
-            name: contact.name,
-            designation: contact.designation,
-            company: contact.company,
-            location: contact.location,
-            profileUrl: contact.profileUrl,
-            profilePicture: contact.profilePicture
+            linkedinId,
+            company: contact.company
           }
         });
+
+        if (existingHR) {
+          await prisma.scrappedHR.update({
+            where: { id: existingHR.id },
+            data: {
+              name: contact.name,
+              designation: contact.designation,
+              location: contact.location,
+              profileUrl: contact.profileUrl,
+              profilePicture: contact.profilePicture
+            }
+          });
+        } else {
+          await prisma.scrappedHR.create({
+            data: {
+              linkedinId,
+              name: contact.name,
+              designation: contact.designation,
+              company: contact.company,
+              location: contact.location,
+              profileUrl: contact.profileUrl,
+              profilePicture: contact.profilePicture
+            }
+          });
+        }
       }
       coinsEarned += hrContacts.length * 2;
     }

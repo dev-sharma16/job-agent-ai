@@ -1,26 +1,128 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { KanbanBoard } from "@/components/job-tracker/kanban-board";
+import { JobApplication } from "@/types/job";
+
+const mockJobs: JobApplication[] = [
+  {
+    id: "1",
+    userId: "current-user",
+    companyName: "Google",
+    jobTitle: "Senior Software Engineer",
+    jobUrl: "https://careers.google.com/jobs/results/123",
+    jobDescription: "We are looking for a Senior Software Engineer...",
+    location: "Bangalore, India",
+    source: "linkedin",
+    stage: "interviewing",
+    priority: "high",
+    dateApplied: "2024-01-15",
+    isArchived: false,
+    isTrashed: false,
+    createdAt: "2024-01-10T10:00:00Z",
+    updatedAt: "2024-01-20T10:00:00Z",
+    skills: [{ id: "1", jobApplicationId: "1", skillId: 1, skillName: "React", matched: true }, { id: "2", jobApplicationId: "1", skillId: 2, skillName: "TypeScript", matched: true }],
+  },
+  {
+    id: "2",
+    userId: "current-user",
+    companyName: "Microsoft",
+    jobTitle: "Full Stack Developer",
+    jobUrl: "https://careers.microsoft.com/jobs/456",
+    location: "Hyderabad, India",
+    source: "naukri",
+    stage: "applied",
+    priority: "medium",
+    dateApplied: "2024-01-18",
+    isArchived: false,
+    isTrashed: false,
+    createdAt: "2024-01-17T10:00:00Z",
+    updatedAt: "2024-01-18T10:00:00Z",
+  },
+  {
+    id: "3",
+    userId: "current-user",
+    companyName: "Amazon",
+    jobTitle: "Backend Engineer",
+    jobUrl: "https://amazon.jobs/en/jobs/789",
+    location: "Bangalore, India",
+    source: "indeed",
+    stage: "bookmarked",
+    priority: "medium",
+    isArchived: false,
+    isTrashed: false,
+    createdAt: "2024-01-19T10:00:00Z",
+    updatedAt: "2024-01-19T10:00:00Z",
+  },
+  {
+    id: "4",
+    userId: "current-user",
+    companyName: "Meta",
+    jobTitle: "Frontend Engineer",
+    jobUrl: "https://careers.meta.com/jobs/101",
+    location: "Remote",
+    source: "linkedin",
+    stage: "applying",
+    priority: "high",
+    isArchived: false,
+    isTrashed: false,
+    createdAt: "2024-01-19T14:00:00Z",
+    updatedAt: "2024-01-19T14:00:00Z",
+  },
+  {
+    id: "5",
+    userId: "current-user",
+    companyName: "Netflix",
+    jobTitle: "DevOps Engineer",
+    jobUrl: "https://jobs.netflix.com/202",
+    location: "Mumbai, India",
+    source: "company",
+    stage: "negotiating",
+    priority: "urgent",
+    dateApplied: "2024-01-10",
+    salaryExpected: "₹50-60 LPA",
+    salaryOffered: "₹55 LPA",
+    isArchived: false,
+    isTrashed: false,
+    createdAt: "2024-01-08T10:00:00Z",
+    updatedAt: "2024-01-22T10:00:00Z",
+  },
+  {
+    id: "6",
+    userId: "current-user",
+    companyName: "Uber",
+    jobTitle: "Mobile Engineer",
+    jobUrl: "https://uber.com/careers/303",
+    location: "Bangalore, India",
+    source: "referral",
+    stage: "rejected",
+    priority: "low",
+    dateApplied: "2024-01-05",
+    isArchived: false,
+    isTrashed: false,
+    createdAt: "2024-01-04T10:00:00Z",
+    updatedAt: "2024-01-15T10:00:00Z",
+  },
+  {
+    id: "7",
+    userId: "current-user",
+    companyName: "Airbnb",
+    jobTitle: "Data Engineer",
+    jobUrl: "https://careers.airbnb.com/404",
+    location: "Remote",
+    source: "linkedin",
+    stage: "accepted",
+    priority: "high",
+    dateApplied: "2024-01-01",
+    salaryOffered: "₹65 LPA",
+    isArchived: false,
+    isTrashed: false,
+    createdAt: "2023-12-20T10:00:00Z",
+    updatedAt: "2024-01-25T10:00:00Z",
+  },
+];
 
 export default function JobTrackerPage() {
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Job Tracker</h1>
-          <p className="text-gray-500">Track and manage your job applications</p>
-        </div>
-        <Button>Add Job</Button>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Kanban Board - Coming Soon</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-gray-500">Job Tracker with drag-and-drop Kanban board will be implemented here.</p>
-          <p className="text-sm text-gray-400 mt-2">Features: Bookmarked → Applying → Applied → Interviewing → Negotiating → Accepted/Rejected</p>
-        </CardContent>
-      </Card>
+      <KanbanBoard initialJobs={mockJobs} />
     </div>
   )
 }
