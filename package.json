@@ -19,6 +19,7 @@
     "@hookform/resolvers": "^5.9.1",
     "@prisma/client": "^6.0.0",
     "@radix-ui/react-select": "^2.3.7",
+    "@radix-ui/react-tabs": "^1.1.21",
     "bcryptjs": "^3.0.3",
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
