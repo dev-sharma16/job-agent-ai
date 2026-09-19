@@ -314,6 +314,7 @@ model Transaction {
   id            String   @id @default(uuid())
   userId        String
   razorpayId    String?  @unique
+  razorpayPaymentId String?
   amount        Int      // in paise (INR)
   currency      String   @default("INR")
   status        String   @default("pending") // pending|captured|failed|refunded

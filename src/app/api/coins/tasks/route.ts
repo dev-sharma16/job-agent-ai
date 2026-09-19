@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { verifyExtensionAuth } from "@/lib/extension-auth";
 
 const EXTENSION_TASKS = {
   "save-job": { coins: 5, name: "Save a job" },
@@ -12,15 +12,14 @@ const EXTENSION_TASKS = {
   "refer-friend": { coins: 50, name: "Refer a friend" },
 } as const;
 
-export async function POST(request: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
-    const auth = await verifyExtensionAuth(request);
-    if (!auth) {
-      return NextResponse.json({ error: "Unauthorized", code: "UNAUTHORIZED" }, { status: 401 });
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json();
-    const { taskId } = body;
+    const { taskId } = await req.json();
 
     if (!taskId || !EXTENSION_TASKS[taskId as keyof typeof EXTENSION_TASKS]) {
       return NextResponse.json({ error: "Invalid task ID" }, { status: 400 });
@@ -30,16 +29,11 @@ export async function POST(request: NextRequest) {
     today.setHours(0, 0, 0, 0);
 
     const existing = await prisma.userTask.findFirst({
-      where: { userId: auth.userId, taskId, createdAt: { gte: today } },
+      where: { userId: session.user.id, taskId, createdAt: { gte: today } },
     });
 
     if (existing?.status === "completed") {
-      return NextResponse.json({
-        success: true,
-        coinsEarned: 0,
-        message: "Task already completed today",
-        alreadyCompleted: true,
-      });
+      return NextResponse.json({ alreadyCompleted: true });
     }
 
     const taskConfig = EXTENSION_TASKS[taskId as keyof typeof EXTENSION_TASKS];
@@ -47,22 +41,23 @@ export async function POST(request: NextRequest) {
 
     await prisma.$transaction([
       prisma.userTask.upsert({
-        where: { userId_taskId_createdAt: { userId: auth.userId, taskId, createdAt: today } },
-        create: { userId: auth.userId, taskId, status: "completed", completedAt: new Date() },
+        where: { userId_taskId_createdAt: { userId: session.user.id, taskId, createdAt: today } },
+        create: { userId: session.user.id, taskId, status: "completed", completedAt: new Date() },
         update: { status: "completed", completedAt: new Date() },
       }),
       prisma.userCoins.upsert({
-        where: { userId: auth.userId },
+        where: { userId: session.user.id },
         update: { coins: { increment: coins } },
-        create: { userId: auth.userId, coins },
+        create: { userId: session.user.id, coins },
       }),
     ]);
-    await checkAndAwardStreak(auth.userId);
+    // Run streak check separately
+    await checkAndAwardStreak(session.user.id);
 
-    return NextResponse.json({ success: true, coinsEarned: coins, newStreak: undefined });
+    return NextResponse.json({ success: true, coins });
   } catch (error) {
     console.error("Task completion error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
   }
 }
 
@@ -79,6 +74,7 @@ async function checkAndAwardStreak(userId: string) {
       const diffDays = Math.floor((new Date(today).getTime() - lastCompleted.getTime()) / (1000 * 60 * 60 * 24));
       
       if (diffDays === 1) {
+        // Consecutive day - increment streak
         await prisma.userStreak.update({
           where: { userId },
           data: {
@@ -88,14 +84,17 @@ async function checkAndAwardStreak(userId: string) {
           },
         });
       } else if (diffDays > 1) {
+        // Streak broken - reset to 1
         await prisma.userStreak.update({
           where: { userId },
           data: { currentStreak: 1, lastCompletedAt: today },
         });
       }
     } else {
-      await prisma.userStreak.create({
-        data: { userId, currentStreak: 1, maxStreak: 1, lastCompletedAt: today },
+      // First time
+      await prisma.userStreak.update({
+        where: { userId },
+        data: { currentStreak: 1, maxStreak: { increment: 1 }, lastCompletedAt: today },
       });
     }
   } else {
