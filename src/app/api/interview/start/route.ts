@@ -1,47 +1,35 @@
 import { NextRequest, NextResponse } from "next/server";
-import { callGemini } from "@/lib/gemini";
+import { generateInitialQuestions } from "@/lib/ai/interview-generator";
 
 export async function POST(req: NextRequest) {
   try {
-    const { jdFormatted, cvFormatted, intro, jobId } = await req.json();
+    const { jdFormatted, cvFormatted, intro, targetRole } = await req.json();
 
     if (!jdFormatted || !cvFormatted || !intro) {
       return NextResponse.json({ error: "JD, CV, and intro are required" }, { status: 400 });
     }
 
-    const prompt = `
-You are an expert interviewer. Conduct a mock interview.
-
-JD: ${JSON.stringify(jdFormatted)}
-CV: ${JSON.stringify(cvFormatted)}
-Candidate Intro: ${intro}
-
-Generate 5-7 behavioral + technical questions tailored to this role and candidate.
-Return JSON: { questions: [{ id, question, type, expectedKeyPoints }] }
-`;
-
-    const result = await callGemini(prompt);
-    let parsedResult;
-    try {
-      const jsonMatch = result.match(/\{[\s\S]*\}/);
-      parsedResult = jsonMatch ? JSON.parse(jsonMatch[0]) : { questions: [] };
-    } catch {
-      parsedResult = { questions: [] };
-    }
+    const questions = await generateInitialQuestions({
+      jdFormatted,
+      cvFormatted,
+      intro,
+      targetRole: targetRole || "Software Engineer",
+    });
 
     const interviewId = crypto.randomUUID();
-    const firstQuestion = parsedResult.questions?.[0] || {
+    const firstQuestion = questions[0] || {
       id: "1",
       question: "Can you walk me through your background and why you're interested in this role?",
       type: "behavioral",
-      expectedKeyPoints: ["Background", "Motivation", "Role fit"]
+      expectedKeyPoints: ["Background", "Motivation", "Role fit"],
+      difficulty: "easy",
     };
 
     return NextResponse.json({
       success: true,
       interviewId,
       question: firstQuestion.question,
-      questions: parsedResult.questions || [],
+      questions,
       message: "Interview started"
     });
   } catch (error) {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { callGemini } from "@/lib/gemini";
+import { generateInterviewFeedback } from "@/lib/ai/interview-generator";
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,53 +11,11 @@ export async function POST(req: NextRequest) {
 
     const fullHistory = candidateResponse ? [...history, { role: "candidate", content: candidateResponse, timestamp: new Date().toISOString() }] : history;
 
-    const prompt = `
-Full Interview Transcript: ${JSON.stringify(fullHistory)}
-
-Provide comprehensive feedback:
-1. Overall Score (0-100)
-2. Strengths (3-5 bullet points)
-3. Areas for Improvement (3-5 bullet points)
-4. Specific Examples from answers
-5. Recommended Next Steps
-
-Return JSON:
-{
-  "score": 75,
-  "strengths": ["..."],
-  "improvements": ["..."],
-  "specificExamples": ["..."],
-  "nextSteps": ["..."],
-  "detailedFeedback": "Overall assessment paragraph"
-}
-`;
-
-    const result = await callGemini(prompt);
-    let parsedResult;
-    try {
-      const jsonMatch = result.match(/\{[\s\S]*\}/);
-      parsedResult = jsonMatch ? JSON.parse(jsonMatch[0]) : {
-        score: 50,
-        strengths: [],
-        improvements: [],
-        specificExamples: [],
-        nextSteps: [],
-        detailedFeedback: "Unable to generate detailed feedback."
-      };
-    } catch {
-      parsedResult = {
-        score: 50,
-        strengths: ["Good effort"],
-        improvements: ["Practice more"],
-        specificExamples: [],
-        nextSteps: ["Review common questions"],
-        detailedFeedback: "Unable to generate detailed feedback."
-      };
-    }
+    const feedback = await generateInterviewFeedback(fullHistory);
 
     return NextResponse.json({
       success: true,
-      ...parsedResult,
+      ...feedback,
       message: "Interview completed"
     });
   } catch (error) {

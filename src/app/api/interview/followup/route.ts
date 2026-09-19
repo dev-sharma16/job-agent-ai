@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { callGemini } from "@/lib/gemini";
+import { generateFollowUpQuestion } from "@/lib/ai/interview-generator";
 
 export async function POST(req: NextRequest) {
   try {
@@ -9,29 +9,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "History and response required" }, { status: 400 });
     }
 
-    const prompt = `
-Interview History: ${JSON.stringify(history)}
-Candidate's Last Answer: ${candidateResponse}
-Question Index: ${questionIndex}
-
-Generate 1 contextual follow-up question. Dig deeper into their answer.
-Return JSON: { question, type, expectedKeyPoints }
-`;
-
-    const result = await callGemini(prompt);
-    let parsedResult;
-    try {
-      const jsonMatch = result.match(/\{[\s\S]*\}/);
-      parsedResult = jsonMatch ? JSON.parse(jsonMatch[0]) : { question: "Can you elaborate on that?" };
-    } catch {
-      parsedResult = { question: "Can you elaborate on that?", type: "followup", expectedKeyPoints: [] };
-    }
+    const followUp = await generateFollowUpQuestion(history, candidateResponse, questionIndex);
 
     return NextResponse.json({
       success: true,
-      question: parsedResult.question,
-      type: parsedResult.type || "followup",
-      expectedKeyPoints: parsedResult.expectedKeyPoints || [],
+      question: followUp.question,
+      type: followUp.type,
+      expectedKeyPoints: followUp.expectedKeyPoints,
+      difficulty: followUp.difficulty,
       interviewId
     });
   } catch (error) {
