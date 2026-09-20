@@ -7,6 +7,7 @@ import { signOut } from "next-auth/react"
 import { Navbar } from "@/components/layout/navbar"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { ExtensionSuccessHandler } from "@/components/auth/extension-success-handler"
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: "🏠" },
@@ -29,6 +30,7 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
+      <ExtensionSuccessHandler />
       
       <div className="flex">
         {/* Mobile sidebar overlay */}

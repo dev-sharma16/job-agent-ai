@@ -163,6 +163,30 @@ class ExtensionAPIClient {
   getExtensionId(): string | null {
     return this.extensionId;
   }
+
+  // Sync auth state from website session
+  async syncAuthFromWebsite(): Promise<{ userId: string; authToken: string } | null> {
+    try {
+      const response = await fetch(`${this.settings.apiBaseUrl}/api/extension/auth/sync`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Extension-ID': this.extensionId || ''
+        },
+        credentials: 'include' // Include cookies for session
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.userId && data.authToken) {
+          return { userId: data.userId, authToken: data.authToken };
+        }
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  }
 }
 
 export const apiClient = new ExtensionAPIClient();

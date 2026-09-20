@@ -6,6 +6,12 @@ import { PrismaAdapter } from "@auth/prisma-adapter"
 import { prisma } from "./prisma"
 import bcrypt from "bcryptjs"
 
+const isDev = process.env.NODE_ENV === "development"
+const hasLinkedInKeys = process.env.LINKEDIN_CLIENT_ID && 
+  process.env.LINKEDIN_CLIENT_ID !== "test-linkedin-client-id" &&
+  process.env.LINKEDIN_CLIENT_SECRET &&
+  process.env.LINKEDIN_CLIENT_SECRET !== "test-linkedin-client-secret"
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: {
@@ -27,7 +33,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         },
       },
     }),
-    LinkedIn({
+    ...(hasLinkedInKeys ? [LinkedIn({
       clientId: process.env.LINKEDIN_CLIENT_ID!,
       clientSecret: process.env.LINKEDIN_CLIENT_SECRET!,
       authorization: {
@@ -35,7 +41,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           scope: "r_liteprofile r_emailaddress w_member_social",
         },
       },
-    }),
+    })] : []),
     Credentials({
       name: "credentials",
       credentials: {
@@ -84,7 +90,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session
     },
     async signIn({ user, account, profile }) {
-      if (account?.provider !== "credentials") return true
+      if (account?.provider !== "credentials") {
+        // Allow OAuth providers - PrismaAdapter will create user
+        return true
+      }
 
       const dbUser = await prisma.user.findUnique({
         where: { email: user.email! },
@@ -97,8 +106,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   events: {
     async signIn({ user, account, isNewUser }) {
       if (isNewUser && account?.provider !== "credentials") {
+        console.log("[AUTH] New OAuth user created:", { email: user.email, provider: account?.provider })
         // Welcome email will be sent via server action
       }
     },
   },
+  debug: process.env.NODE_ENV === "development",
 })

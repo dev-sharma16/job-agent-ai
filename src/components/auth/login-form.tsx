@@ -37,11 +37,11 @@ export function LoginForm() {
     setLoading(true)
 
     try {
-      const redirectTo = isExtension ? `/api/auth/callback/credentials?extension=true` : callbackUrl
-      await signIn("credentials", {
+      // Always redirect to callbackUrl (dashboard). Extension detection happens on dashboard.
+      const result = await signIn("credentials", {
         email,
         password,
-        redirectTo,
+        redirectTo: callbackUrl,
       })
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Something went wrong"
@@ -56,8 +56,8 @@ export function LoginForm() {
   }
 
   const handleOAuthSignIn = (provider: "google" | "linkedin") => {
-    const redirectTo = isExtension ? `/api/auth/callback/${provider}?extension=true` : callbackUrl
-    signIn(provider, { callbackUrl: redirectTo })
+    // Always use callbackUrl (dashboard). Extension detection happens on dashboard.
+    signIn(provider, { callbackUrl })
   }
 
   return (

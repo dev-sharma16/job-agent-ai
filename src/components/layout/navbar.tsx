@@ -2,12 +2,14 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { signOut } from "next-auth/react"
+import { signOut, useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 export function Navbar() {
   const pathname = usePathname()
+  const { data: session } = useSession()
+  const isLoggedIn = !!session?.user
   const isDashboard = pathname.startsWith("/dashboard") || pathname.startsWith("/job-tracker") || pathname.startsWith("/resume") || pathname.startsWith("/practice") || pathname.startsWith("/linkedin") || pathname.startsWith("/account") || pathname.startsWith("/feedback")
 
   return (
@@ -32,7 +34,7 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center gap-3">
-          {isDashboard ? (
+          {isLoggedIn ? (
             <>
               <Link href="/dashboard" className="hidden sm:block">
                 <Button variant="ghost" size="sm">Dashboard</Button>

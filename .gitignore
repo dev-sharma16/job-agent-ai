@@ -20,6 +20,11 @@
 # production
 /build
 
+# extension
+/extension/dist
+/extension/node_modules
+/extension/icons/icon.png
+
 # misc
 .DS_Store
 *.pem

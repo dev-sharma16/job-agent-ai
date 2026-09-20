@@ -41,3 +41,26 @@ function timingSafeEqual(a: string, b: string): boolean {
   if (aBuf.length !== bBuf.length) return false;
   return crypto.timingSafeEqual(aBuf, bBuf);
 }
+
+export interface ExtensionAuthPayload {
+  userId: string;
+  extensionId: string;
+  iat: number;
+  exp: number;
+}
+
+export function createAuthToken(payload: ExtensionAuthPayload): string {
+  const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url');
+  const body = Buffer.from(JSON.stringify(payload)).toString('base64url');
+  return `${header}.${body}`;
+}
+
+export function parseAuthToken(token: string): ExtensionAuthPayload | null {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 2) return null;
+    return JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf8'));
+  } catch {
+    return null;
+  }
+}

@@ -1,6 +1,11 @@
 import { Resend } from "resend"
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+const isDev = process.env.NODE_ENV === "development"
+const hasValidResendKey = process.env.RESEND_API_KEY && 
+  process.env.RESEND_API_KEY !== "re_test_xxx" &&
+  process.env.RESEND_API_KEY.startsWith("re_")
+
+const resend = hasValidResendKey ? new Resend(process.env.RESEND_API_KEY) : null
 
 export async function sendEmail({
   to,
@@ -11,6 +16,14 @@ export async function sendEmail({
   subject: string
   html: string
 }) {
+  if (!resend) {
+    if (isDev) {
+      console.log("[DEV] Email skipped (no valid Resend key):", { to, subject })
+      return { id: "dev-mock-id" }
+    }
+    throw new Error("Email service not configured")
+  }
+  
   return resend.emails.send({
     from: process.env.EMAIL_FROM!,
     to,

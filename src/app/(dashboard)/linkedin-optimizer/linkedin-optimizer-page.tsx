@@ -8,9 +8,9 @@ import { LinkedInForm } from "@/components/linkedin/linkedin-form";
 import { LinkedInResults } from "@/components/linkedin/linkedin-results";
 import { Sparkles, FileText } from "lucide-react";
 
-export default function LinkedInOptimizerPage() {
+export default function LinkedInOptimizerPageClient({ initialOptimization }: { initialOptimization: any }) {
   const [phase, setPhase] = useState("analyze");
-  const [results, setResults] = useState<any>(null);
+  const [results, setResults] = useState<any>(initialOptimization);
   const [analyzing, setAnalyzing] = useState(false);
 
   const handleAnalyze = async (data: { profileData: string; targetRoles: string[] }) => {

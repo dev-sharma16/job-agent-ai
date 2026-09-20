@@ -1,6 +1,7 @@
 const esbuild = require('esbuild');
 const fs = require('fs');
 const path = require('path');
+const sharp = require('sharp');
 
 const isWatch = process.argv.includes('--watch');
 const isZip = process.argv.includes('--zip');
@@ -81,8 +82,8 @@ async function build() {
   manifest.background = { service_worker: 'background.js', type: 'module' };
   fs.writeFileSync(path.join(outDir, 'manifest.json'), JSON.stringify(manifest, null, 2));
 
-  // Copy icons (create placeholder PNGs from SVG if needed)
-  copyIcons();
+  // Copy icons (create PNGs from SVG)
+  await copyIcons();
 
   if (isWatch) {
     console.log('Watching for changes...');
@@ -105,23 +106,23 @@ function copyStaticFiles() {
   }
 }
 
-function copyIcons() {
+async function copyIcons() {
   const iconsDir = path.join(outDir, 'icons');
   if (!fs.existsSync(iconsDir)) {
     fs.mkdirSync(iconsDir, { recursive: true });
   }
 
-  // Copy SVG as placeholder - in production, convert to PNG
+  const src = path.join(__dirname, 'icons', 'icon.svg');
+  if (!fs.existsSync(src)) return;
+
   const sizes = [16, 32, 48, 128];
-  sizes.forEach(size => {
-    const src = path.join(__dirname, 'icons', 'icon.svg');
+  for (const size of sizes) {
     const dest = path.join(iconsDir, `icon${size}.png`);
-    // For now, copy SVG as PNG placeholder
-    // In production, use sharp or similar to convert
-    if (fs.existsSync(src)) {
-      fs.copyFileSync(src, dest.replace('.png', '.svg'));
-    }
-  });
+    await sharp(src)
+      .resize(size, size)
+      .png()
+      .toFile(dest);
+  }
 }
 
 function createZip() {

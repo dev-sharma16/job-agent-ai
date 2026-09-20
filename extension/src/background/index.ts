@@ -23,11 +23,15 @@ async function initializeExtension(): Promise<void> {
   if (userId) {
     await apiClient.setAuthToken(userId);
   }
+  
+  // Try to sync auth from website on startup
+  await syncAuthFromWebsite();
 }
 
 function setupAlarms(): void {
   chrome.alarms.create('syncPendingJobs', { periodInMinutes: SYNC_INTERVAL_MINUTES });
   chrome.alarms.create('checkAuth', { periodInMinutes: 60 });
+  chrome.alarms.create('syncAuthFromWebsite', { periodInMinutes: 5 });
 }
 
 chrome.alarms.onAlarm.addListener(async (alarm) => {
@@ -35,6 +39,8 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
     await syncPendingJobs();
   } else if (alarm.name === 'checkAuth') {
     await checkAuthStatus();
+  } else if (alarm.name === 'syncAuthFromWebsite') {
+    await syncAuthFromWebsite();
   }
 });
 
@@ -73,6 +79,19 @@ async function checkAuthStatus(): Promise<void> {
     if (error instanceof Error && error.message.includes('401')) {
       await handleAuthExpired();
     }
+  }
+}
+
+async function syncAuthFromWebsite(): Promise<void> {
+  try {
+    const result = await apiClient.syncAuthFromWebsite();
+    if (result) {
+      await setUserId(result.userId);
+      await apiClient.setAuthToken(result.userId);
+      console.log('[autoJob] Synced auth from website:', result.userId);
+    }
+  } catch (error) {
+    console.error('[autoJob] Sync auth from website failed:', error);
   }
 }
 
@@ -203,6 +222,12 @@ async function handleMessage(message: any, sender: chrome.runtime.MessageSender)
         pendingJobsCount: pendingJobs.length,
         settings: await getSettings()
       };
+    }
+
+    case 'SYNC_AUTH_FROM_WEBSITE': {
+      await syncAuthFromWebsite();
+      const userId = await getUserId();
+      return { success: true, authenticated: !!userId };
     }
 
     case 'UPDATE_SETTINGS': {

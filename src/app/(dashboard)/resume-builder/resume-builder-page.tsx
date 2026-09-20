@@ -10,8 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Download, Sparkles, Upload, FileText } from "lucide-react";
 
-export default function ResumeBuilderPage() {
-  const [resumeData, setResumeData] = useState<any>(null);
+export default function ResumeBuilderPageClient({ initialResumeData }: { initialResumeData: any }) {
+  const [resumeData, setResumeData] = useState<any>(initialResumeData);
   const [activeTab, setActiveTab] = useState("builder");
   const [template, setTemplate] = useState<"modern" | "classic" | "minimal">("modern");
 

@@ -1,22 +1,30 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { getDashboardStats } from "@/actions/dashboard"
 
-const quickStats = [
-  { label: "Jobs Tracked", value: "0", icon: "📋", href: "/job-tracker" },
-  { label: "Resumes Created", value: "0", icon: "📄", href: "/resume-builder" },
-  { label: "Interviews Practiced", value: "0", icon: "🎤", href: "/practice-interview" },
-  { label: "Coins Earned", value: "0", icon: "🪙", href: "/account" },
-]
+export default async function DashboardPage() {
+  const stats = await getDashboardStats()
 
-const quickActions = [
-  { label: "Add Job Application", href: "/job-tracker", icon: "➕", description: "Start tracking a new job application" },
-  { label: "Build Resume with AI", href: "/resume-builder", icon: "🤖", description: "Generate a tailored resume for your target role" },
-  { label: "Start Mock Interview", href: "/practice-interview", icon: "🎯", description: "Practice with AI-powered interview simulations" },
-  { label: "Optimize LinkedIn", href: "/linkedin-optimizer", icon: "🔗", description: "Get AI suggestions to improve your profile" },
-]
+  const quickStats = stats ? [
+    { label: "Jobs Tracked", value: stats.jobsTracked.toString(), icon: "📋", href: "/job-tracker" },
+    { label: "Resumes Created", value: stats.resumesCreated.toString(), icon: "📄", href: "/resume-builder" },
+    { label: "Interviews Practiced", value: stats.interviewsPracticed.toString(), icon: "🎤", href: "/practice-interview" },
+    { label: "Coins Earned", value: stats.coins.toString(), icon: "🪙", href: "/account" },
+  ] : [
+    { label: "Jobs Tracked", value: "0", icon: "📋", href: "/job-tracker" },
+    { label: "Resumes Created", value: "0", icon: "📄", href: "/resume-builder" },
+    { label: "Interviews Practiced", value: "0", icon: "🎤", href: "/practice-interview" },
+    { label: "Coins Earned", value: "0", icon: "🪙", href: "/account" },
+  ]
 
-export default function DashboardPage() {
+  const quickActions = [
+    { label: "Add Job Application", href: "/job-tracker", icon: "➕", description: "Start tracking a new job application" },
+    { label: "Build Resume with AI", href: "/resume-builder", icon: "🤖", description: "Generate a tailored resume for your target role" },
+    { label: "Start Mock Interview", href: "/practice-interview", icon: "🎯", description: "Practice with AI-powered interview simulations" },
+    { label: "Optimize LinkedIn", href: "/linkedin-optimizer", icon: "🔗", description: "Get AI suggestions to improve your profile" },
+  ]
+
   return (
     <div className="space-y-8">
       {/* Welcome Banner */}
