@@ -15,26 +15,26 @@ export type JobSource = "linkedin" | "naukri" | "indeed" | "glassdoor" | "compan
 export interface JobApplication {
   id: string;
   userId: string;
-  originalId?: string;
+  originalId: string | null;
   companyName: string;
   jobTitle: string;
-  jobUrl?: string;
-  jobDescription?: string;
-  location?: string;
-  source?: JobSource;
-  stage: JobStage;
-  priority: JobPriority;
-  dateApplied?: string;
-  followUp?: string;
-  salaryExpected?: string;
-  salaryOffered?: string;
-  notes?: string;
+  jobUrl: string | null;
+  jobDescription: string | null;
+  location: string | null;
+  source: string | null;
+  stage: string;
+  priority: string;
+  dateApplied: Date | string | null;
+  followUp: Date | string | null;
+  salaryExpected: string | null;
+  salaryOffered: string | null;
+  notes: string | null;
   isArchived: boolean;
   isTrashed: boolean;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date | string;
+  updatedAt: Date | string;
   skills?: JobSkill[];
-  formattedJD?: FormattedJD;
+  formattedJD?: FormattedJD | null;
   interviews?: Interview[];
 }
 
@@ -51,22 +51,22 @@ export interface FormattedJD {
   userId: string;
   jobApplicationId: string;
   formattedText: string;
-  createdAt: string;
+  createdAt: Date | string;
 }
 
 export interface Interview {
   id: string;
   interviewId: string;
   userId: string;
-  jobApplicationId?: string;
-  jdFormatted?: string;
-  cvFormatted?: string;
+  jobApplicationId: string | null;
+  jdFormatted: string | null;
+  cvFormatted: string | null;
   history: string;
-  strengths?: string;
-  improvements?: string;
-  score?: number;
-  completedAt?: string;
-  createdAt: string;
+  strengths: string | null;
+  improvements: string | null;
+  score: number | null;
+  completedAt: Date | string | null;
+  createdAt: Date | string;
 }
 
 export const JOB_STAGES: Record<JobStage, { label: string; description: string; order: number }> = {
@@ -80,7 +80,7 @@ export const JOB_STAGES: Record<JobStage, { label: string; description: string; 
   archived: { label: "Archived", description: "Closed/archived", order: 7 },
 };
 
-export const STAGE_COLORS: Record<JobStage, string> = {
+export const STAGE_COLORS: Record<string, string> = {
   bookmarked: "bg-gray-100 text-gray-700 border-gray-200",
   applying: "bg-blue-100 text-blue-700 border-blue-200",
   applied: "bg-indigo-100 text-indigo-700 border-indigo-200",
@@ -91,14 +91,14 @@ export const STAGE_COLORS: Record<JobStage, string> = {
   archived: "bg-slate-100 text-slate-700 border-slate-200",
 };
 
-export const PRIORITY_COLORS: Record<JobPriority, string> = {
+export const PRIORITY_COLORS: Record<string, string> = {
   low: "bg-gray-100 text-gray-700 border-gray-200",
   medium: "bg-blue-100 text-blue-700 border-blue-200",
   high: "bg-orange-100 text-orange-700 border-orange-200",
   urgent: "bg-red-100 text-red-700 border-red-200",
 };
 
-export const JOB_SOURCES: Record<JobSource, string> = {
+export const JOB_SOURCES: Record<string, string> = {
   linkedin: "LinkedIn",
   naukri: "Naukri",
   indeed: "Indeed",

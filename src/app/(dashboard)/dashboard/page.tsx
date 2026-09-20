@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { getDashboardStats } from "@/actions/dashboard"
 
+export const dynamic = 'force-dynamic'
+
 export default async function DashboardPage() {
   const stats = await getDashboardStats()
 
