@@ -83,7 +83,7 @@ export interface APIError {
   details?: Record<string, unknown>;
 }
 
-export type JobSource = 'linkedin' | 'naukri' | 'indeed';
+export type JobSource = 'linkedin' | 'naukri' | 'indeed' | 'accenture' | 'other';
 export type JobStage = 'bookmarked' | 'applying' | 'applied' | 'interviewing' | 'negotiating' | 'accepted' | 'rejected' | 'archived';
 
 export const JOB_STAGES: JobStage[] = [
@@ -97,7 +97,7 @@ export const JOB_STAGES: JobStage[] = [
   'archived'
 ];
 
-export const JOB_SOURCES: JobSource[] = ['linkedin', 'naukri', 'indeed'];
+export const JOB_SOURCES: JobSource[] = ['linkedin', 'naukri', 'indeed', 'accenture', 'other'];
 
 export interface ExtensionSettings {
   apiBaseUrl: string;

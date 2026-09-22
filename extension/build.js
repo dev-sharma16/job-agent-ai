@@ -28,39 +28,15 @@ async function build() {
     sourcemap: true
   });
 
-  // Build content scripts
+  // Build content scripts - Universal scraper for all career sites
   await esbuild.build({
-    entryPoints: ['src/content/linkedin.ts'],
+    entryPoints: ['src/content/universal.ts'],
     bundle: true,
     platform: 'node',
     target: 'es2020',
-    outfile: path.join(outDir, 'content/linkedin.js'),
+    outfile: path.join(outDir, 'content/universal.js'),
     format: 'iife',
-    globalName: 'LinkedInScraper',
-    external: ['chrome'],
-    sourcemap: true
-  });
-
-  await esbuild.build({
-    entryPoints: ['src/content/naukri.ts'],
-    bundle: true,
-    platform: 'node',
-    target: 'es2020',
-    outfile: path.join(outDir, 'content/naukri.js'),
-    format: 'iife',
-    globalName: 'NaukriScraper',
-    external: ['chrome'],
-    sourcemap: true
-  });
-
-  await esbuild.build({
-    entryPoints: ['src/content/indeed.ts'],
-    bundle: true,
-    platform: 'node',
-    target: 'es2020',
-    outfile: path.join(outDir, 'content/indeed.js'),
-    format: 'iife',
-    globalName: 'IndeedScraper',
+    globalName: 'UniversalScraper',
     external: ['chrome'],
     sourcemap: true
   });

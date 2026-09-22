@@ -15,6 +15,7 @@ export function LoginForm() {
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard"
   const isExtension = searchParams.get("extension") === "true"
+  const extensionId = searchParams.get("extId")
   const { data: session } = useSession()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -22,14 +23,35 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if (session?.user && isExtension) {
-      window.opener?.postMessage({
-        type: 'AUTOJOB_AUTH_SUCCESS',
-        userId: session.user.id
-      }, '*')
-      window.close()
+    const userId = session?.user?.id
+    if (userId && isExtension && extensionId) {
+      try {
+        if (typeof window !== 'undefined' && (window as any).chrome?.runtime?.sendMessageExternal) {
+          (window as any).chrome.runtime.sendMessageExternal(extensionId, {
+            type: 'AUTOJOB_AUTH_SUCCESS',
+            userId
+          }, () => {
+            if ((window as any).chrome?.runtime?.lastError) {
+              console.log('Extension messaging failed, falling back to postMessage:', (window as any).chrome.runtime.lastError.message)
+              window.opener?.postMessage({
+                type: 'AUTOJOB_AUTH_SUCCESS',
+                userId
+              }, '*')
+            }
+            window.close()
+          })
+        } else {
+          throw new Error('Chrome runtime not available')
+        }
+      } catch {
+        window.opener?.postMessage({
+          type: 'AUTOJOB_AUTH_SUCCESS',
+          userId
+        }, '*')
+        window.close()
+      }
     }
-  }, [session, isExtension])
+  }, [session, isExtension, extensionId])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

@@ -1,5 +1,5 @@
 import { apiClient } from '../lib/api';
-import { getUserId, clearUserData } from '../lib/storage';
+import { getUserId, clearUserData, setUserId } from '../lib/storage';
 
 const statusEl = document.getElementById('status')!;
 const statusTextEl = document.getElementById('statusText')!;
@@ -10,13 +10,65 @@ const logoutBtn = document.getElementById('logoutBtn');
 const saveCurrentJobBtn = document.getElementById('saveCurrentJobBtn')!;
 const scrapePageBtn = document.getElementById('scrapePageBtn')!;
 const openDashboardBtn = document.getElementById('openDashboardBtn')!;
+const resyncAuthBtn = document.getElementById('resyncAuthBtn')!;
 const savedJobsCountEl = document.getElementById('savedJobsCount')!;
 const coinsCountEl = document.getElementById('coinsCount')!;
 const streakCountEl = document.getElementById('streakCount')!;
 
 async function initializePopup(): Promise<void> {
   await apiClient.initialize({ apiBaseUrl: 'http://localhost:3000' });
+  await syncAuthIfNeeded();
+  // Re-initialize to pick up any auth token stored by background sync
+  await apiClient.initialize({ apiBaseUrl: 'http://localhost:3000' });
   await updateUI();
+}
+
+async function syncAuthIfNeeded(): Promise<void> {
+  const userId = await getUserId();
+  if (!userId) {
+    try {
+      // Try direct sync from popup (may have better cookie access)
+      const result = await syncAuthFromWebsiteDirect();
+      if (result) {
+        await setUserId(result.userId);
+        await apiClient.setAuthToken(result.userId);
+        return;
+      }
+    } catch {
+      // Fall through to background sync
+    }
+    
+    try {
+      await chrome.runtime.sendMessage({ type: 'SYNC_AUTH_FROM_WEBSITE' });
+      await new Promise(r => setTimeout(r, 500));
+    } catch {
+      // Ignore sync errors
+    }
+  }
+}
+
+async function syncAuthFromWebsiteDirect(): Promise<{ userId: string; authToken: string } | null> {
+  try {
+    const extensionId = apiClient.getExtensionId();
+    const response = await fetch('http://localhost:3000/api/extension/auth/sync', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Extension-ID': extensionId || ''
+      },
+      credentials: 'include'
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      if (data.success && data.userId && data.authToken) {
+        return { userId: data.userId, authToken: data.authToken };
+      }
+    }
+    return null;
+  } catch {
+    return null;
+  }
 }
 
 async function updateUI(): Promise<void> {
@@ -45,7 +97,7 @@ async function loadDashboardStats(): Promise<void> {
   try {
     const response = await fetch('http://localhost:3000/api/extension/stats', {
       headers: {
-        'Authorization': `Bearer ${(apiClient as any).authToken}`
+        'Authorization': `Bearer ${apiClient.getAuthToken()}`
       }
     });
     
@@ -68,7 +120,9 @@ loginBtn.addEventListener('click', async () => {
   `;
   
   try {
-    await chrome.tabs.create({ url: 'http://localhost:3000/login?extension=true' });
+    const extensionId = apiClient.getExtensionId();
+    const url = `http://localhost:3000/login?extension=true&extId=${extensionId}`;
+    await chrome.tabs.create({ url });
     window.close();
   } catch (error) {
     loginBtn.disabled = false;
@@ -152,6 +206,23 @@ scrapePageBtn.addEventListener('click', async () => {
 openDashboardBtn.addEventListener('click', () => {
   chrome.tabs.create({ url: 'http://localhost:3000/dashboard' });
   window.close();
+});
+
+resyncAuthBtn.addEventListener('click', async () => {
+  resyncAuthBtn.disabled = true;
+  const originalText = resyncAuthBtn.innerHTML;
+  resyncAuthBtn.innerHTML = '<span class="spinner"></span><span>Re-syncing...</span>';
+  
+  try {
+    const extensionId = apiClient.getExtensionId();
+    const url = `http://localhost:3000/login?extension=true&extId=${extensionId}&resync=true`;
+    await chrome.tabs.create({ url });
+    window.close();
+  } catch (error) {
+    showToast('Failed to re-sync', true);
+    resyncAuthBtn.disabled = false;
+    resyncAuthBtn.innerHTML = originalText;
+  }
 });
 
 function showToast(message: string, isError = false): void {

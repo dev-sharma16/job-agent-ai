@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,7 +42,8 @@ interface AccountPageClientProps {
 
 export default function AccountPageClient({ initialProfile }: AccountPageClientProps) {
   const [activeTab, setActiveTab] = useState("profile");
-  const [profile, setProfile] = useState({
+  
+  const getInitialProfile = () => ({
     fullName: initialProfile?.name || "",
     email: initialProfile?.email || "",
     phone: initialProfile?.phone || "",
@@ -50,19 +51,8 @@ export default function AccountPageClient({ initialProfile }: AccountPageClientP
     designation: initialProfile?.designation || "",
     bio: initialProfile?.bio || "",
   });
-
-  useEffect(() => {
-    if (initialProfile) {
-      setProfile({
-        fullName: initialProfile.name || "",
-        email: initialProfile.email || "",
-        phone: initialProfile.phone || "",
-        location: initialProfile.location || "",
-        designation: initialProfile.designation || "",
-        bio: initialProfile.bio || "",
-      });
-    }
-  }, [initialProfile]);
+  
+  const [profile, setProfile] = useState(getInitialProfile);
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
     newPassword: "",

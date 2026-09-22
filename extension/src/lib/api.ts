@@ -164,6 +164,10 @@ class ExtensionAPIClient {
     return this.extensionId;
   }
 
+  getAuthToken(): string | null {
+    return this.authToken;
+  }
+
   // Sync auth state from website session
   async syncAuthFromWebsite(): Promise<{ userId: string; authToken: string } | null> {
     try {

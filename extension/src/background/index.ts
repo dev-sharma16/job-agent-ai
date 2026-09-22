@@ -123,7 +123,19 @@ chrome.runtime.onMessageExternal.addListener((message, sender, sendResponse) => 
   }
 });
 
-async function handleMessage(message: any, sender: chrome.runtime.MessageSender): Promise<any> {
+interface ExtensionMessage {
+  type: string;
+  job?: Record<string, unknown>;
+  jobs?: Record<string, unknown>[];
+  userId?: string;
+  company?: string;
+  location?: string;
+  taskId?: string;
+  taskName?: string;
+  settings?: Record<string, unknown>;
+}
+
+async function handleMessage(message: ExtensionMessage, sender: chrome.runtime.MessageSender): Promise<Record<string, unknown>> {
   switch (message.type) {
     case 'SAVE_JOB': {
       const { job } = message;

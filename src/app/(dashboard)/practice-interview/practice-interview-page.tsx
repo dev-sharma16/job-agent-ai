@@ -96,6 +96,46 @@ export default function PracticeInterviewPageClient({ initialJobs, initialHistor
     }
   };
 
+  const handleEndInterview = async (finalAnswer?: string) => {
+    if (!state.interviewId) return;
+
+    setState(prev => ({ ...prev, loading: true }));
+
+    try {
+      const response = await fetch("/api/interview/end", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          interviewId: state.interviewId,
+          history: state.messages,
+          candidateResponse: finalAnswer,
+        }),
+      });
+      const result = await response.json();
+      if (result.success) {
+        // Add to history
+        const newHistoryItem = {
+          id: state.interviewId,
+          jobTitle: "Mock Interview",
+          companyName: "Practice",
+          score: result.score,
+          completedAt: new Date().toISOString(),
+          duration: 15,
+          status: "completed" as const,
+        };
+        setState(prev => ({
+          ...prev,
+          phase: "feedback",
+          feedback: result,
+          loading: false,
+          history: [newHistoryItem, ...prev.history],
+        }));
+      }
+    } catch (error) {
+      setState(prev => ({ ...prev, loading: false }));
+    }
+  };
+
   const handleAnswer = useCallback(async (answer: string) => {
     if (!state.interviewId || state.loading) return;
 
@@ -136,47 +176,7 @@ export default function PracticeInterviewPageClient({ initialJobs, initialHistor
     } catch (error) {
       console.error("Followup error:", error);
     }
-  }, [state.interviewId, state.messages, state.questionIndex, state.questions]);
-
-  const handleEndInterview = async (finalAnswer?: string) => {
-    if (!state.interviewId) return;
-
-    setState(prev => ({ ...prev, loading: true }));
-
-    try {
-      const response = await fetch("/api/interview/end", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          interviewId: state.interviewId,
-          history: state.messages,
-          candidateResponse: finalAnswer,
-        }),
-      });
-      const result = await response.json();
-      if (result.success) {
-        // Add to history
-        const newHistoryItem = {
-          id: state.interviewId,
-          jobTitle: "Mock Interview",
-          companyName: "Practice",
-          score: result.score,
-          completedAt: new Date().toISOString(),
-          duration: 15,
-          status: "completed" as const,
-        };
-        setState(prev => ({
-          ...prev,
-          phase: "feedback",
-          feedback: result,
-          loading: false,
-          history: [newHistoryItem, ...prev.history],
-        }));
-      }
-    } catch (error) {
-      setState(prev => ({ ...prev, loading: false }));
-    }
-  };
+  }, [state.interviewId, state.messages, state.questionIndex, state.questions, handleEndInterview]);
 
   const handleRetry = () => {
     setState(prev => ({

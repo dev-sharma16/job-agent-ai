@@ -17,8 +17,6 @@ interface AddJobModalProps {
 }
 
 export function AddJobModal({ isOpen, onClose, onSubmit }: AddJobModalProps) {
-  if (!isOpen) return null;
-
   const [formData, setFormData] = useState({
     companyName: "",
     jobTitle: "",
@@ -32,6 +30,8 @@ export function AddJobModal({ isOpen, onClose, onSubmit }: AddJobModalProps) {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
